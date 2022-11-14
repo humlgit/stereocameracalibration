@@ -14,7 +14,7 @@ void loop() {
     Serial.print(inputString);
     // clear the string:
     digitalWrite(13, HIGH);
-    delay(500);
+    delay(5);
     digitalWrite(13, LOW);
     inputString = "";
     stringComplete = false;
