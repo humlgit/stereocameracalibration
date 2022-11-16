@@ -10,7 +10,7 @@ with Vimba.get_instance() as vimba:
         frame = cam.get_frame()
         frame.convert_pixel_format(PixelFormat.Mono8)
         cv2.imwrite('frame.jpg', frame.as_opencv_image())
-        cam.stop_streaming()
+        cam.stop_streaming()    
     with cams[1] as cam:
         dt_img2 = datetime.now()
         dt_img2.microsecond
