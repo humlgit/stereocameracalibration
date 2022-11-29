@@ -29,10 +29,12 @@ import sys
 from typing import Optional, Tuple
 from vimba import *
 import time
+from datetime import datetime
+import cv2
 
 def print_preamble():
     print('///////////////////////////////////////////')
-    print('/// Vimba API Asynchronous Grab Example ///')
+    print('/// Vimba API Synchronous Grab Example ///')
     print('///////////////////////////////////////////\n')
 
 
@@ -109,30 +111,52 @@ def setup_camera(cam: Camera):
             pass
 
 
-def frame_handler(cam: Camera, frame: Frame):
-    print('{} acquired {}'.format(cam, frame), flush=True)
-    time.sleep(3)
-    cam.queue_frame(frame)
 
+def frame_handler(cam: Camera, frame: Frame):
+    dt = datetime.now()
+    dt.microsecond
+    print("Current Time =", dt)
+    print("frame= ", frame, " frame_time= ", frame.get_timestamp())
+    print('{} acquired {}'.format(cam, frame), flush=True)
+    time.sleep(3) # time between captures frames
+    cam.queue_frame(frame)
+    
+    #TODO: show/save frames  
+    '''
+    frame_prim.convert_pixel_format(PixelFormat.Mono8)
+    cv2.imwrite('frame2.jpg', frame_prim.as_opencv_image())
+                    
+    frame_sec.convert_pixel_format(PixelFormat.Mono8)
+    cv2.imwrite('frame2.jpg', frame_sec.as_opencv_image())
+    '''
 
 def main():
     print_preamble()
     cam_id, allocation_mode = parse_args()  # cam_id = None, allocation_mode = 0
 
-    with Vimba.get_instance():
-        with get_camera(cam_id) as cam:     #cam_id = None, cam = Camera(id=DEV_0xA47010F06B00B)
-            #setup_camera(cam)              # only for GigE Cameras
-            print('Press <enter> to stop Frame acquisition.')
+    with Vimba.get_instance() as vimba:
+        cams = vimba.get_all_cameras()
+        
+        print("get1= ", cams[0].get_id())                               # out: DEV_0xA47010F06B00B
+        print("get2= ", vimba.get_camera_by_id("DEV_0xA47010F06B00B"))  # out: Camera(id=DEV_0xA47010F06B00B)
+        print("get3= ", cams) # out: cams= (<vimba.camera.Camera object at 0x0000022D3BCAD950>, <vimba.camera.Camera object at 0x0000022D2B01B8D0>)
+        
+        with get_camera(cams[0].get_id()) as cam_primary:
+            with get_camera(cams[1].get_id()) as cam_secondary:
+                #setup_camera(cam)              # only for GigE Cameras
+                print('Press <enter> to stop Frame acquisition.')
 
-            try:
-                # Start Streaming with a custom a buffer of 10 Frames (defaults to 5)
-                cam.start_streaming(handler=frame_handler, buffer_count=10, allocation_mode=allocation_mode)
-                input()
-                
+                try:
+                    # Start Streaming with a custom a buffer of 10 Frames (defaults to 5)
+                    cam_primary.start_streaming(handler=frame_handler, buffer_count=10, allocation_mode=allocation_mode)
+                    cam_secondary.start_streaming(handler=frame_handler, buffer_count=10, allocation_mode=allocation_mode)
 
-            finally:
-                cam.stop_streaming()
+                    input()
+                    
 
+                finally:
+                    cam_primary.stop_streaming()
+                    cam_secondary.stop_streaming()
 
 if __name__ == '__main__':
     main()

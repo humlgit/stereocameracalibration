@@ -118,7 +118,9 @@ def setup_camera(cam: Camera):
         # prefer color formats over monochrome formats
         
         cv_fmts = intersect_pixel_formats(cam.get_pixel_formats(), OPENCV_PIXEL_FORMATS)
-        color_fmts = intersect_pixel_formats(cv_fmts, COLOR_PIXEL_FORMATS)
+        color_fmts = intersect_pixel_formats(cv_fmts, COLOR_PIX
+        
+        EL_FORMATS)
         
         if color_fmts:
             cam.set_pixel_format(color_fmts[0])
@@ -157,7 +159,7 @@ class Handler:
 
 def main():
     print_preamble()
-    cam_id = parse_args()
+    cam_id = parse_args()   # returns cam_id = None
 
     with Vimba.get_instance() as vimba:
         cams = vimba.get_all_cameras()
