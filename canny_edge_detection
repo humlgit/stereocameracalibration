@@ -1,0 +1,25 @@
+import cv2
+
+img = cv2.imread('C:/Users/mlcv/Desktop/Cam1_Frm1.jpg')
+edges = cv2.Canny(img,100,200)
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# binarize the image
+#ret, bw = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+
+ret, bw = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+
+blur = cv2.GaussianBlur(gray,(5,5),cv2.BORDER_DEFAULT)
+ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+
+edges2 = cv2.Canny(bw,100,200)
+edges3 = cv2.Canny(th3,100,200)
+
+
+
+cv2.imshow("Edge Detected Image", edges)
+cv2.imshow("Edge Detected Image2", edges2)
+cv2.imshow("Edge Detected Image3", edges3)
+
+cv2.waitKey(0) # waits until a key is pressed
+#cv2.destroyAllWindows() # destroys the window showing image
