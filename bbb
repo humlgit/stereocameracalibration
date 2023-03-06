@@ -1,3 +1,37 @@
 https://bbb.tu-dresden.de/b/hol-dfr-khn-8fl
 https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html
 https://bbb.tu-dresden.de/b/hol-dfr-khn-8fl
+import cv2
+
+# Create two VideoCapture objects and specify the camera device IDs
+cap1 = cv2.VideoCapture(0)
+cap2 = cv2.VideoCapture(1)
+
+# Check if the cameras were successfully opened
+if not cap1.isOpened() or not cap2.isOpened():
+    print("Could not open cameras")
+    exit()
+
+# Loop through frames from both cameras
+while True:
+    # Capture a frame from each camera
+    ret1, frame1 = cap1.read()
+    ret2, frame2 = cap2.read()
+
+    # Check if frames were successfully captured from both cameras
+    if not ret1 or not ret2:
+        print("Could not capture frames")
+        break
+
+    # Display the captured frames
+    cv2.imshow('Camera 1', frame1)
+    cv2.imshow('Camera 2', frame2)
+
+    # Exit the loop on keypress
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the cameras and destroy the windows
+cap1.release()
+cap2.release()
+cv2.destroyAllWindows()
