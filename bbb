@@ -35,3 +35,5 @@ while True:
 cap1.release()
 cap2.release()
 cv2.destroyAllWindows()
+
+cv2.error: OpenCV(4.6.0) :-1: error: (-5:Bad argument) in function 'VideoCapture'
